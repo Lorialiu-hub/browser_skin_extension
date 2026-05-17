@@ -1,4 +1,22 @@
-// 浏览器换肤插件 - 弹出窗口逻辑
+Settings.theme = themeId;
+    this.updatePreview();
+}
+
+  initEventListeners() {
+    document.getElementById('search-btn').addEventListener('click', () => this.searchImages());
+    document.getElementById('image-search').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        this.searchImages();
+      }
+    });
+    document.getElementById('apply-btn').addEventListener('click', () => this.applySettings());
+    document.getElementById('reset-btn').addEventListener('click', () => this.resetToDefault());
+    document.getElementById('test-effects').addEventListener('click', () => this.testEffects());
+
+    document.getElementById('typing-effects-toggle').addEventListener('change', (e) => {
+      this.currentSettings.typingEffectsEnabled = e.target.checked;
+    });
+    document.getElementById('lamp-toggle').addEventListener('change', (e) =>// 浏览器换肤插件 - 弹出窗口逻辑
 
 class PopupManager {
   constructor() {
