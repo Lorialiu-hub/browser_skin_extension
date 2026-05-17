@@ -1,0 +1,267 @@
+/* 浏览器换肤插件 - 完整样式文件 */
+/* 主题变量定义 */
+:root {
+  /* 经典主题 */
+  --theme-classic-primary: #6d28d9;
+  --theme-classic-secondary: #8b5cf6;
+  --theme-classic-bg: linear-gradient(135deg, #6d28d9 0%, #8b5cf6 100%);
+  
+  /* 复古主题 */
+  --theme-retro-primary: #92400e;
+  --theme-retro-secondary: #b45309;
+  --theme-retro-bg: linear-gradient(135deg, #92400e 0%, #b45309 100%);
+  
+  /* 清醒主题 */
+  --theme-clean-primary: #374151;
+  --theme-clean-secondary: #6b7280;
+  --theme-clean-bg: linear-gradient(135deg, #374151 0%, #6b7280 100%);
+  
+  /* 羊皮纸主题 */
+  --theme-parchment-primary: #78350f;
+  --theme-parchment-secondary: #d97706;
+  --theme-parchment-bg: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  
+  /* 深色主题 */
+  --theme-dark-primary: #1e40af;
+  --theme-dark-secondary: #3b82f6;
+  --theme-dark-bg: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  
+  /* 自然主题 */
+  --theme-nature-primary: #065f46;
+  --theme-nature-secondary: #10b981;
+  --theme-nature-bg: linear-gradient(135deg, #065f46 0%, #10b981 100%);
+  
+  /* 海洋主题 */
+  --theme-ocean-primary: #0369a1;
+  --theme-ocean-secondary: #0ea5e9;
+  --theme-ocean-bg: linear-gradient(135deg, #0369a1 0%, #0ea5e9 100%);
+  
+  /* 日落主题 */
+  --theme-sunset-primary: #dc2626;
+  --theme-sunset-secondary: #f97316;
+  --theme-sunset-bg: linear-gradient(135deg, #dc2626 0%, #f97316 50%, #3b82f6 100%);
+}
+
+/* 主题应用层 */
+.browser-skin-theme-layer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 9998;
+  pointer-events: none;
+  transition: background 0.5s ease;
+}
+
+/* 自定义图片背景 */
+.browser-skin-custom-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 9997;
+  pointer-events: none;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  transition: opacity 0.3s ease, filter 0.3s ease;
+}
+
+/* 蒙版效果 */
+.browser-skin-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 9996;
+  pointer-events: none;
+}
+
+/* 毛玻璃蒙版 */
+.browser-skin-mask.frosted {
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* 暗色蒙版 */
+.browser-skin-mask.dark {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* ========== 打字动效系统 ========== */
+.typing-effects-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 10000;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* 粒子动效 */
+.typing-particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  pointer-events: none;
+  animation: particleFloat 1.5s ease-out forwards;
+}
+
+@keyframes particleFloat {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--tx, 0), var(--ty, -50px)) scale(0);
+    opacity: 0;
+  }
+}
+
+/* 水波纹动效 */
+.typing-ripple {
+  position: absolute;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  animation: rippleExpand 1s ease-out forwards;
+  opacity: 0.7;
+}
+
+@keyframes rippleExpand {
+  0% {
+    transform: scale(0.1);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(3);
+    opacity: 0;
+  }
+}
+
+/* 环绕光晕效果 */
+.typing-glow-ring {
+  position: absolute;
+  border-radius: 50%;
+  box-shadow: 0 0 20px currentColor;
+  animation: glowRotate 3s linear infinite;
+  opacity: 0.5;
+}
+
+@keyframes glowRotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* 打字时增强效果 */
+input:focus ~ .typing-glow-ring,
+textarea:focus ~ .typing-glow-ring {
+  animation-duration: 1s;
+  opacity: 0.8;
+  box-shadow: 0 0 30px currentColor;
+}
+
+/* ========== 拉灯绳系统 ========== */
+.browser-skin-lamp {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 10001;
+  cursor: pointer;
+  user-select: none;
+}
+
+.lamp-rope {
+  position: relative;
+  width: 4px;
+  height: 60px;
+  background: linear-gradient(to bottom, #8b5cf6, #6d28d9);
+  margin: 0 auto;
+  border-radius: 2px;
+  transition: height 0.3s ease;
+}
+
+.lamp-rope.pulling {
+  height: 80px;
+  animation: ropePull 0.5s ease;
+}
+
+@keyframes ropePull {
+  0%, 100% { height: 60px; }
+  50% { height: 80px; }
+}
+
+.lamp-bulb {
+  width: 30px;
+  height: 30px;
+  background: radial-gradient(circle at 30% 30%, #ffd700, #ff8c00);
+  border-radius: 50%;
+  margin-top: 5px;
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+  transition: all 0.3s ease;
+}
+
+.lamp-bulb.lit {
+  background: radial-gradient(circle at 30% 30%, #ffff00, #ff4500);
+  box-shadow: 0 0 40px rgba(255, 69, 0, 0.8);
+  animation: bulbFlicker 0.2s ease 3;
+}
+
+@keyframes bulbFlicker {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+/* 闪光过渡效果 */
+.theme-transition-flash {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: white;
+  z-index: 10002;
+  opacity: 0;
+  pointer-events: none;
+  animation: flashEffect 0.5s ease;
+}
+
+@keyframes flashEffect {
+  0% { opacity: 0; }
+  50% { opacity: 0.7; }
+  100% { opacity: 0; }
+}
+
+/* ========== 响应式调整 ========== */
+@media (max-width: 768px) {
+  .browser-skin-lamp {
+    top: 10px;
+    right: 10px;
+    transform: scale(0.8);
+  }
+  
+  .lamp-rope {
+    height: 50px;
+  }
+}
+
+/* 打印时隐藏所有效果 */
+@media print {
+  .browser-skin-theme-layer,
+  .browser-skin-custom-bg,
+  .browser-skin-mask,
+  .typing-effects-container,
+  .browser-skin-lamp {
+    display: none !important;
+  }
+}
