@@ -4,15 +4,16 @@
   "version": "1.0.0",
   "description": "支持多主题、自定义背景、打字动效的浏览器换肤插件",
   "icons": {
-  "16": "16.png",
-  "48": "48.png",
-  "128": "128.png"
-},
-
+    "16": "16.png",
+    "48": "48.png",
+    "128": "128.png"
+  },
   "permissions": [
     "storage",
     "activeTab",
-    "scripting"
+    "scripting",
+    "contextMenus",
+    "tabs"
   ],
   "host_permissions": [
     "<all_urls>"
