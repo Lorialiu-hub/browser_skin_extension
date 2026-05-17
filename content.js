@@ -155,8 +155,8 @@ class BrowserSkinExtension {
     particle.style.animationDuration = `${1 + Math.random()}s`;
     
     const rect = target.getBoundingClientRect();
-    particle.style.left = `${rect.x + rect.width / 2}px`;
-    particle.style.top = `${rect.y + rect.height / 2}px`;
+    particle.style.left = `${rect.left + rect.width / 2}px`;
+    particle.style.top = `${rect.top + rect.height / 2}px`;
     
     this.elements.effectsContainer.appendChild(particle);
     setTimeout(() => particle.remove(), 1200);
@@ -174,8 +174,8 @@ class BrowserSkinExtension {
     ripple.style.height = `${size}px`;
     
     const rect = target.getBoundingClientRect();
-    ripple.style.left = `${rect.x + rect.width / 2 - size / 2}px`;
-    ripple.style.top = `${rect.y + rect.height / 2 - size / 2}px`;
+    ripple.style.left = `${rect.left + rect.width / 2 - size / 2}px`;
+    ripple.style.top = `${rect.top + rect.height / 2 - size / 2}px`;
     
     this.elements.effectsContainer.appendChild(ripple);
     setTimeout(() => ripple.remove(), 1000);
@@ -193,8 +193,64 @@ class BrowserSkinExtension {
     glowRing.style.height = `${size}px`;
     
     const rect = target.getBoundingClientRect();
-    glowRing.style.left = `${rect.x + rect.width / 2 - size / 2}px`;
-    glowRing.style.top = `${rect.y + rect.height / 2 - size / 2}px`;
+    glowRing.style.left = `${rect.left + rect.width / 2 - size / 2}px`;
+    glowRing.style.top = `${rect.top + rect.height / 2 - size / 2}px`;
     
     this.elements.effectsContainer.appendChild(glowRing);
-    setTimeout(() => glowRing.remove(), 150
+    setTimeout(() => glowRing.remove(), 1500);
+  }
+  
+  toggleLight() {
+    this.lightOn = !this.lightOn;
+    
+    // 更新灯泡状态
+    if (this.elements.lampBulb) {
+      this.elements.lampBulb.classList.toggle('lit', this.lightOn);
+    }
+    
+    // 更新绳子状态
+    if (this.elements.lampRope) {
+      this.elements.lampRope.classList.toggle('pulling', !this.lightOn);
+    }
+    
+    this.updateLampRopeHeight();
+    chrome.storage.sync.set({ lightOn: this.lightOn });
+  }
+  
+  updateLampRopeHeight() {
+    const ropeHeight = this.lightOn ? 60 : 80;
+    if (this.elements.lampRope) {
+      this.elements.lampRope.style.height = `${ropeHeight}px`;
+    }
+  }
+  
+  applyTheme(themeName) {
+    this.currentTheme = themeName;
+    if (this.elements.themeLayer) {
+      // 清除旧主题类名
+      this.elements.themeLayer.className = 'browser-skin-theme-layer';
+      // 添加新主题类名
+      this.elements.themeLayer.classList.add(`theme-${themeName}`);
+    }
+  }
+  
+  applyCustomBackground() {
+    if (this.elements.customBg) {
+      if (this.customBackground) {
+        this.elements.customBg.style.backgroundImage = `url("${this.customBackground}")`;
+        this.elements.customBg.style.opacity = this.opacity.toString();
+        this.elements.customBg.style.filter = `brightness(${this.brightness})`;
+        this.elements.customBg.style.display = 'block';
+      } else {
+        this.elements.customBg.style.display = 'none';
+      }
+    }
+  }
+}
+
+// 启动插件
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => new BrowserSkinExtension());
+} else {
+  new BrowserSkinExtension();
+}
