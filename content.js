@@ -1,9 +1,9 @@
 /**
- * 浏览器换肤插件 - Content Script (完全修复版)
+ * 浏览器换肤插件 - Content Script (最终修复版)
  * 修复内容：
- * 1. 所有 DOM 元素使用 class 而非 ID，与 styles.css 完全匹配
- * 2. 拉灯绳结构修正为三层嵌套
- * 3. 模板字符串变量插值补全
+ * 1. 所有模板字符串变量插值补全（核心问题）
+ * 2. DOM 元素使用正确的 class 名称
+ * 3. 拉灯绳三层嵌套结构
  */
 
 class BrowserSkinExtension {
@@ -39,47 +39,40 @@ class BrowserSkinExtension {
   }
   
   createThemeLayer() {
-    // 创建主题层 - 使用 class 而非 ID
     const themeLayer = document.createElement('div');
-    themeLayer.className = 'browser-skin-theme-layer';  // ✅ 修复：使用 class
+    themeLayer.className = 'browser-skin-theme-layer';
     document.documentElement.appendChild(themeLayer);
     this.elements.themeLayer = themeLayer;
     
-    // 创建自定义背景层 - 使用 class 而非 ID
     const customBg = document.createElement('div');
-    customBg.className = 'browser-skin-custom-bg';  // ✅ 修复：使用 class
+    customBg.className = 'browser-skin-custom-bg';
     themeLayer.appendChild(customBg);
     this.elements.customBg = customBg;
   }
   
   createEffectsContainer() {
-    // 创建打字特效容器 - 使用 class
     const effectsContainer = document.createElement('div');
-    effectsContainer.className = 'typing-effects-container';  // ✅ 修复：使用 class
+    effectsContainer.className = 'typing-effects-container';
     document.body.appendChild(effectsContainer);
     this.elements.effectsContainer = effectsContainer;
   }
   
   createLampCord() {
-    // 创建外层容器 - 使用 class
     const lampContainer = document.createElement('div');
-    lampContainer.className = 'browser-skin-lamp';  // ✅ 修复：添加外层容器
+    lampContainer.className = 'browser-skin-lamp';
     document.body.appendChild(lampContainer);
     this.elements.lampContainer = lampContainer;
     
-    // 创建绳子 - 使用 class
     const rope = document.createElement('div');
-    rope.className = 'lamp-rope';  // ✅ 修复：添加 rope 类名
+    rope.className = 'lamp-rope';
     lampContainer.appendChild(rope);
     this.elements.lampRope = rope;
     
-    // 创建灯泡 - 使用 class
     const bulb = document.createElement('div');
-    bulb.className = 'lamp-bulb lit';  // ✅ 修复：使用 class
+    bulb.className = 'lamp-bulb lit';
     rope.appendChild(bulb);
     this.elements.lampBulb = bulb;
     
-    // 绑定点击事件
     lampContainer.addEventListener('click', () => this.toggleLight());
   }
   
@@ -147,13 +140,13 @@ class BrowserSkinExtension {
   
   createParticle(target) {
     const particle = document.createElement('div');
-    particle.className = 'typing-particle';  // ✅ 修复：使用正确的 class
+    particle.className = 'typing-particle';
     const hue = Math.floor(Math.random() * 360);
     const size = Math.random() * 8 + 4;
     const tx = (Math.random() - 0.5) * 120;
     const ty = (Math.random() - 0.5) * 120;
     
-    // ✅ 修复：模板字符串变量插值补全
+    // ✅ 修复：补全所有变量插值
     particle.style.backgroundColor = `hsl(${hue}, 100%, 70%)`;
     particle.style.setProperty('--tx', `${tx}px`);
     particle.style.setProperty('--ty', `${ty}px`);
@@ -162,8 +155,8 @@ class BrowserSkinExtension {
     particle.style.animationDuration = `${1 + Math.random()}s`;
     
     const rect = target.getBoundingClientRect();
-    particle.style.left = `${rect.left + rect.width / 2}px`;
-    particle.style.top = `${rect.top + rect.height / 2}px`;
+    particle.style.left = `${rect.x + rect.width / 2}px`;
+    particle.style.top = `${rect.y + rect.height / 2}px`;
     
     this.elements.effectsContainer.appendChild(particle);
     setTimeout(() => particle.remove(), 1200);
@@ -171,18 +164,18 @@ class BrowserSkinExtension {
   
   createRipple(target) {
     const ripple = document.createElement('div');
-    ripple.className = 'typing-ripple';  // ✅ 修复：使用正确的 class
+    ripple.className = 'typing-ripple';
     const hue = Math.floor(Math.random() * 360);
     const size = 60 + Math.random() * 40;
     
-    // ✅ 修复：模板字符串变量插值补全
+    // ✅ 修复：补全所有变量插值
     ripple.style.color = `hsl(${hue}, 100%, 70%)`;
     ripple.style.width = `${size}px`;
     ripple.style.height = `${size}px`;
     
     const rect = target.getBoundingClientRect();
-    ripple.style.left = `${rect.left + rect.width / 2 - size / 2}px`;
-    ripple.style.top = `${rect.top + rect.height / 2 - size / 2}px`;
+    ripple.style.left = `${rect.x + rect.width / 2 - size / 2}px`;
+    ripple.style.top = `${rect.y + rect.height / 2 - size / 2}px`;
     
     this.elements.effectsContainer.appendChild(ripple);
     setTimeout(() => ripple.remove(), 1000);
@@ -190,77 +183,18 @@ class BrowserSkinExtension {
   
   createGlowRing(target) {
     const glowRing = document.createElement('div');
-    glowRing.className = 'typing-glow-ring';  // ✅ 修复：使用正确的 class
-    const id = `glow-ring-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-    glowRing.id = id;
+    glowRing.className = 'typing-glow-ring';
     const hue = Math.floor(Math.random() * 360);
     const size = 80 + Math.random() * 60;
     
-    // ✅ 修复：模板字符串变量插值补全
+    // ✅ 修复：补全所有变量插值
     glowRing.style.color = `hsl(${hue}, 100%, 70%)`;
     glowRing.style.width = `${size}px`;
     glowRing.style.height = `${size}px`;
     
     const rect = target.getBoundingClientRect();
-    glowRing.style.left = `${rect.left + rect.width / 2 - size / 2}px`;
-    glowRing.style.top = `${rect.top + rect.height / 2 - size / 2}px`;
+    glowRing.style.left = `${rect.x + rect.width / 2 - size / 2}px`;
+    glowRing.style.top = `${rect.y + rect.height / 2 - size / 2}px`;
     
     this.elements.effectsContainer.appendChild(glowRing);
-    setTimeout(() => glowRing.remove(), 1500);
-  }
-  
-  toggleLight() {
-    this.lightOn = !this.lightOn;
-    
-    // 更新灯泡状态
-    if (this.elements.lampBulb) {
-      this.elements.lampBulb.classList.toggle('lit', this.lightOn);
-    }
-    
-    // 更新绳子状态
-    if (this.elements.lampRope) {
-      this.elements.lampRope.classList.toggle('pulling', !this.lightOn);
-    }
-    
-    this.updateLampRopeHeight();
-    chrome.storage.sync.set({ lightOn: this.lightOn });
-  }
-  
-  updateLampRopeHeight() {
-    const ropeHeight = this.lightOn ? 60 : 80;  // ✅ 修复：使用正确的高度值
-    if (this.elements.lampRope) {
-      this.elements.lampRope.style.height = `${ropeHeight}px`;  // ✅ 修复：模板字符串补全
-    }
-  }
-  
-  applyTheme(themeName) {
-    this.currentTheme = themeName;
-    if (this.elements.themeLayer) {
-      // 清除旧主题类名
-      this.elements.themeLayer.className = 'browser-skin-theme-layer';
-      // 添加新主题类名 - ✅ 修复：模板字符串补全
-      this.elements.themeLayer.classList.add(`theme-${themeName}`);
-    }
-  }
-  
-  applyCustomBackground() {
-    if (this.elements.customBg) {
-      if (this.customBackground) {
-        // ✅ 修复：模板字符串变量插值补全
-        this.elements.customBg.style.backgroundImage = `url("${this.customBackground}")`;
-        this.elements.customBg.style.opacity = this.opacity.toString();
-        this.elements.customBg.style.filter = `brightness(${this.brightness})`;
-        this.elements.customBg.style.display = 'block';
-      } else {
-        this.elements.customBg.style.display = 'none';
-      }
-    }
-  }
-}
-
-// 启动插件
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => new BrowserSkinExtension());
-} else {
-  new BrowserSkinExtension();
-}
+    setTimeout(() => glowRing.remove(), 150
