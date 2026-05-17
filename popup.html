@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>浏览器换肤设置</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #333;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+    
+    h1 {
+      text-align: center;
+      color: #6d28d9;
+      margin-bottom: 30px;
+      font-size: 28px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #6d28d9, #8b5cf6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    h2 {
+      color: #4b5563;
+      margin: 25px 0 15px;
+      font-size: 20px;
+      font-weight: 600;
+      border-left: 4px solid #6d28d9;
+      padding-left: 12px;
+    }
+    
+    .section {
+      margin-bottom: 30px;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.7);
+      border-radius: 15px;
+      border: 1px solid rgba(109, 40, 217, 0.1);
+    }
+    
+    /* 主题网格 */
+    .theme-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 15px;
+      margin-top: 15px;
+    }
+    
+    .theme-btn {
+      padding: 15px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100px;
+      color: white;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .theme-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.1);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    
+    .theme-btn:hover::before {
+      opacity: 1;
+    }
+    
+    .theme-btn.active {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    }
+    
+    .theme-btn .theme-name {
+      font-size: 16px;
+      margin-bottom: 5px;
+      z-index: 1;
+    }
+    
+    .theme-btn .theme-desc {
+      font-size: 12px;
+      opacity: 0.9;
+      z-index: 1;
+    }
+    
+    /* 主题颜色定义 */
+    .theme-classic { background: linear-gradient(135deg, #6d28d9, #8b5cf6); }
+    .theme-retro { background: linear-gradient(135deg, #92400e, #b45309); }
+    .theme-clean { background: linear-gradient(135deg, #374151, #6b7280); }
+    .theme-parchment { background: linear-gradient(135deg, #fef3c7, #fde68a); color: #78350f !important; }
+    .theme-dark { background: linear-gradient(135deg, #1e293b, #0f172a); }
+    .theme-nature { background: linear-gradient(135deg, #065f46, #10b981); }
+    .theme-ocean { background: linear-gradient(135deg, #0369a1, #0ea5e9); }
+    .theme-sunset { background: linear-gradient(135deg, #dc2626, #f97316, #3b82f6); }
+    
+    /* 搜索区域 */
+    .search-container {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
+    
+    #image-search {
+      flex: 1;
+      padding: 12px 20px;
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
+      font-size: 16px;
+      transition: all 0.3s ease;
+    }
+    
+    #image-search:focus {
+      outline: none;
+      border-color: #6d28d9;
+      box-shadow: 0 0 0 3px rgba(109, 40, 217, 0.1);
+    }
+    
+    #search-btn {
+      padding: 12px 25px;
+      background: linear-gradient(135deg, #6d28d9, #8b5cf6);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+    
+    #search-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(109, 40, 217, 0.3);
+    }
+    
+    /* 图片搜索结果 */
+    .image-results {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 10px;
+      margin-top: 20px;
+      max-height: 300px;
+      overflow-y: auto;
+      padding: 10px;
+      background: rgba(0, 0, 0, 0.03);
+      border-radius: 10px;
+    }
+    
+    .image-result {
+      position: relative;
+      border-radius: 8px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .image-result:hover {
+      transform: scale(1.05);
+    }
+    
+    .image-result img {
+      width: 100%;
+      height: 100px;
+      object-fit: cover;
+      display: block;
+    }
+    
+    .image-result.selected::after {
+      content: '✓';
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      background: #10b981;
+      color: white;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+    
+    /* 滑块控件 */
+    .slider-container {
+      margin: 20px 0;
+    }
+    
+    .slider-label {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+    
+    .slider-value {
+      color: #6d28d9;
+      font-weight: 600;
+    }
+    
+    input[type="range"] {
+      width: 100%;
+      height: 8px;
+      -webkit-appearance: none;
+      background: linear-gradient(to right, #e5e7eb, #6d28d9);
+      border-radius: 4px;
+      outline: none;
+    }
+    
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 24px;
+      height: 24px;
+      background: white;
+      border: 3px solid #6d28d9;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+    }
+    
+    /* 下拉选择 */
+    select {
+      width: 100%;
+      padding: 12px 20px;
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
+      font-size: 16px;
+      background: white;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 10px;
+    }
+    
+    select:focus {
+      outline: none;
+      border-color: #6d28d9;
+      box-shadow: 0 0 0 3px rgba(109, 40, 217, 0.1);
+    }
+    
+    /* 预览区域 */
+    .preview-container {
+      margin-top: 20px;
+      padding: 20px;
+      background: rgba(0, 0, 0, 0.05);
+      border-radius: 12px;
+      text-align: center;
+    }
+    
+    .preview-box {
+      width: 200px;
+      height: 100px;
+      margin: 0 auto 15px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #6d28d9, #8b5cf6);
+      transition: all 0.3s ease;
+    }
+    
+    /* 按钮组 */
+    .button-group {
+      display: flex;
+      gap: 15px;
+      margin-top: 30px;
+    }
+    
+    .btn {
+      flex: 1;
+      padding: 15px;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, #6d28d9, #8b5cf6);
+      color: white;
+    }
+    
+    .btn-secondary {
+      background: #f3f4f6;
+      color: #4b5563;
+    }
+    
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* 状态消息 */
+    .status-message {
+      padding: 12px 20px;
+      border-radius: 8px;
+      margin-top: 20px;
+      text-align: center;
+      font-weight: 500;
+      display: none;
+    }
+    
+    .status-success {
+      background: #d1fae5;
+      color: #065f46;
+      border: 1px solid #a7f3d0;
+    }
+    
+    .status-error {
+      background: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #fecaca;
+    }
+    
+    /* 加载动画 */
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(109, 40, 217, 0.3);
+      border-radius: 50%;
+      border-top-color: #6d28d9;
+      animation: spin 1s ease-in-out infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    /* 响应式设计 */
+    @media (max-width: 600px) {
+      .container {
+        padding: 20px;
+      }
+      
+      .theme-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      .button-group {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎨 浏览器换肤设置</h1>
+    
+    <!-- 主题选择 -->
+    <div class="section">
+      <h2>选择主题</h2>
+      <div class="theme-grid" id="theme-grid">
+        <!-- 主题按钮将通过JavaScript动态生成 -->
+      </div>
+    </div>
+    
+    <!-- 自定义图片背景 -->
+    <div class="section">
+      <h2>自定义图片背景</h2>
+      <div class="search-container">
+        <input type="text" id="image-search" placeholder="搜索图片关键词（如：自然、城市、星空）...">
+        <button id="search-btn">搜索</button>
+      </div>
+      <div class="image-results" id="image-results">
+        <!-- 图片搜索结果将在这里显示 -->
+      </div>
+    </div>
+    
+    <!-- 效果设置 -->
+    <div class="section">
+      <h2>效果设置</h2>
+      
+      <!-- 透明度 -->
+      <div class="slider-container">
+        <div class="slider-label">
+          <span>透明度</span>
+          <span class="slider-value" id="opacity-value">100%</span>
+        </div>
+        <input type="range" id="opacity-slider" min="0" max="100" value="100">
+      </div>
+      
+      <!-- 明暗度 -->
+      <div class="slider-container">
+        <div class="slider-label">
+          <span>明暗度</span>
+          <span class="slider-value" id="brightness-value">1.0</span>
+        </div>
+        <input type="range" id="brightness-slider" min="0.5" max="1.5" step="0.1" value="1.0">
+      </div>
+      
+      <!-- 蒙版样式 -->
+      <div class="slider-container">
+        <div class="slider-label">
+          <span>蒙版样式</span>
+        </div>
+        <select id="mask-style">
+          <option value="none">无蒙版</option>
+          <option value="frosted">毛玻璃蒙版</option>
+          <option value="dark">暗色蒙版</option>
+        </select>
+      </div>
+    </div>
+    
+    <!-- 功能开关 -->
+    <div class="section">
+      <h2>功能开关</h2>
+      <div style="display: flex; flex-direction: column; gap: 15px;">
+        <label style="display: flex; align-items: center; gap: 10px;">
+          <input type="checkbox" id="typing-effects-toggle" checked>
+          <span>打字动效（粒子、水波纹、光晕）</span>
+        </label>
+        <label style="display: flex; align-items: center; gap: 10px;">
+          <input type="checkbox" id="lamp-toggle" checked>
+          <span>拉灯绳随机切换主题</span>
+        </label>
+      </div>
+    </div>
+    
+    <!-- 预览 -->
+    <div class="section preview-container">
+      <h2>实时预览</h2>
+      <div class="preview-box" id="preview-box"></div>
+      <p>当前设置效果预览</p>
+    </div>
+    
+    <!-- 状态消息 -->
+    <div class="status-message" id="status-message"></div>
+    
+    <!-- 操作按钮 -->
+    <div class="button-group">
+      <button class="btn btn-primary" id="apply-btn">应用设置</button>
+      <button class="btn btn-secondary" id="reset-btn">恢复默认</button>
+      <button class="btn btn-secondary" id="test-effects">测试动效</button>
+    </div>
+  </div>
+  
+  <script src="popup.js"></script>
+</body>
+</html>
