@@ -1,9 +1,7 @@
-// 浏览器换肤插件 - 后台服务worker
-
+// 浏览器换肤插件 - 后台服务 worker
 // 插件安装时初始化
 chrome.runtime.onInstalled.addListener(() => {
   console.log('浏览器换肤插件已安装');
-  
   // 设置默认值
   chrome.storage.sync.set({
     currentTheme: 'classic',
@@ -14,7 +12,6 @@ chrome.runtime.onInstalled.addListener(() => {
     typingEffectsEnabled: true,
     lampEnabled: true
   });
-  
   // 创建右键菜单
   createContextMenus();
 });
@@ -29,7 +26,6 @@ function createContextMenus() {
       title: '切换主题',
       contexts: ['page']
     });
-    
     // 主题子菜单
     const themes = [
       { id: 'theme-classic', title: '经典主题' },
@@ -41,7 +37,6 @@ function createContextMenus() {
       { id: 'theme-ocean', title: '海洋主题' },
       { id: 'theme-sunset', title: '日落主题' }
     ];
-    
     themes.forEach(theme => {
       chrome.contextMenus.create({
         id: theme.id,
@@ -50,14 +45,12 @@ function createContextMenus() {
         contexts: ['page']
       });
     });
-    
     // 分隔符
     chrome.contextMenus.create({
       type: 'separator',
       parentId: 'change-theme',
       contexts: ['page']
     });
-    
     // 随机主题
     chrome.contextMenus.create({
       id: 'theme-random',
@@ -65,14 +58,12 @@ function createContextMenus() {
       title: '随机主题',
       contexts: ['page']
     });
-    
     // 其他功能菜单
     chrome.contextMenus.create({
       id: 'toggle-effects',
       title: '切换动效',
       contexts: ['page']
     });
-    
     chrome.contextMenus.create({
       id: 'toggle-lamp',
       title: '显示/隐藏灯绳',
@@ -81,16 +72,18 @@ function createContextMenus() {
   });
 }
 
-// 监听右键菜单点击
-chrome.contextMenus.onClicked.addListener((info, tab) => {
-  if (info.menuItemId.startsWith('theme-')) {
-    handleThemeChange(info.menuItemId, tab);
-  } else if (info.menuItemId === 'toggle-effects') {
-    toggleTypingEffects(tab);
-  } else if (info.menuItemId === 'toggle-lamp') {
-    toggleLamp(tab);
-  }
-});
+// 监听右键菜单点击 - ✅ 修复：添加 API 可用性检查
+if (chrome.contextMenus) {
+  chrome.contextMenus.onClicked.addListener((info, tab) => {
+    if (info.menuItemId.startsWith('theme-')) {
+      handleThemeChange(info.menuItemId, tab);
+    } else if (info.menuItemId === 'toggle-effects') {
+      toggleTypingEffects(tab);
+    } else if (info.menuItemId === 'toggle-lamp') {
+      toggleLamp(tab);
+    }
+  });
+}
 
 // 处理主题切换
 function handleThemeChange(menuItemId, tab) {
@@ -99,7 +92,6 @@ function handleThemeChange(menuItemId, tab) {
     const themes = ['classic', 'retro', 'clean', 'parchment', 'dark', 'nature', 'ocean', 'sunset'];
     const randomTheme = themes[Math.floor(Math.random() * themes.length)];
     chrome.storage.sync.set({ currentTheme: randomTheme });
-    
     // 发送消息给内容脚本
     if (tab.id) {
       chrome.tabs.sendMessage(tab.id, {
@@ -119,11 +111,9 @@ function handleThemeChange(menuItemId, tab) {
       'theme-ocean': 'ocean',
       'theme-sunset': 'sunset'
     };
-    
     const theme = themeMap[menuItemId];
     if (theme) {
       chrome.storage.sync.set({ currentTheme: theme });
-      
       if (tab.id) {
         chrome.tabs.sendMessage(tab.id, {
           action: 'themeChanged',
@@ -139,7 +129,6 @@ function toggleTypingEffects(tab) {
   chrome.storage.sync.get(['typingEffectsEnabled'], (result) => {
     const newState = !result.typingEffectsEnabled;
     chrome.storage.sync.set({ typingEffectsEnabled: newState });
-    
     if (tab.id) {
       chrome.tabs.sendMessage(tab.id, {
         action: 'toggleEffects',
@@ -154,7 +143,6 @@ function toggleLamp(tab) {
   chrome.storage.sync.get(['lampEnabled'], (result) => {
     const newState = !result.lampEnabled;
     chrome.storage.sync.set({ lampEnabled: newState });
-    
     if (tab.id) {
       chrome.tabs.sendMessage(tab.id, {
         action: 'toggleLamp',
@@ -164,10 +152,9 @@ function toggleLamp(tab) {
   });
 }
 
-// 监听来自popup的消息
+// 监听来自 popup 的消息
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   console.log('收到消息:', request);
-  
   switch (request.action) {
     case 'getSettings':
       chrome.storage.sync.get([
@@ -182,17 +169,14 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         sendResponse(result);
       });
       return true; // 保持消息通道开放
-      
     case 'updateSettings':
       chrome.storage.sync.set(request.settings, () => {
         sendResponse({ success: true });
       });
       return true;
-      
     case 'searchImage':
       searchUnsplashImage(request.query, sendResponse);
       return true;
-      
     case 'resetToDefault':
       chrome.storage.sync.set({
         currentTheme: 'classic',
@@ -207,16 +191,14 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   }
 });
 
-// 搜索Unsplash图片
+// 搜索 Unsplash 图片
 async function searchUnsplashImage(query, sendResponse) {
   try {
-    // Unsplash API（需要替换为您的API密钥）
-    const apiKey = 'YOUR_UNSPLASH_API_KEY'; // 注意：需要替换为真实API密钥
-    const url = `https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&per_page=10&client_id=${apiKey}`;
-    
+    // Unsplash API（需要替换为您的 API 密钥）
+    const apiKey = 'YOUR_UNSPLASH_API_KEY'; // 注意：需要替换为真实 API 密钥
+    const url = `https://api.unsplash.com/search/photos?query=${query}&per_page=10&client_id=${apiKey}`;
     const response = await fetch(url);
     const data = await response.json();
-    
     if (data.results && data.results.length > 0) {
       const images = data.results.map(photo => ({
         id: photo.id,
@@ -226,7 +208,6 @@ async function searchUnsplashImage(query, sendResponse) {
         author: photo.user.name,
         authorUrl: photo.user.links.html
       }));
-      
       sendResponse({ success: true, images });
     } else {
       sendResponse({ success: false, error: '未找到相关图片' });
